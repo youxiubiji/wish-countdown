@@ -14,7 +14,9 @@
       <text>保存到相册</text>
     </view>
     <view class="btn-auto">
-      <button class="btn" type="primary">转发到群或好友</button>
+      <button class="btn" type="primary" open-type="share">
+        转发到群或好友
+      </button>
       <button class="btn" type="default">查看我的心愿倒计时</button>
     </view>
     <view class="note">*下拉可切换名言</view>
