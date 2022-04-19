@@ -5,7 +5,7 @@ import { get, post, put } from "@/utils/request";
  */
 export const wxlogin = (data) =>
   post({
-    url: "/api/account/wxlogin",
+    url: "/users/wxlogin",
     data,
   });
 //获取用户信息
