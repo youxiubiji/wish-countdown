@@ -1,5 +1,5 @@
-import { wxlogin, getInfo, login } from "@/api/user.js";
-import util, { msg } from "@/utils/util";
+import { wxlogin, getInfo } from "@/api/user.js";
+import util from "@/utils/util";
 const state = {
   info: "",
   token: util.storage("YXBJ-token") || "",
@@ -12,10 +12,6 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token;
     util.storage("YXBJ-token", token);
-  },
-  RESET_STATE: (state) => {
-    state.info = "";
-    state.token = "";
   },
 };
 
@@ -45,21 +41,6 @@ const actions = {
       //TODO handle the exception
     }
   },
-  // 邮箱登录
-  login({ commit }, userInfo) {
-    return new Promise((resolve, reject) => {
-      login(userInfo)
-        .then(async (response) => {
-          commit("SET_TOKEN", response.token);
-          const data = await getInfo();
-          commit("SET_USERINFO", data);
-          resolve();
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  },
   // 获取用户信息
   getInfo({ commit }) {
     return new Promise((resolve, reject) => {
@@ -71,14 +52,6 @@ const actions = {
         .catch((error) => {
           reject(error);
         });
-    });
-  },
-  // user logout
-  logout({ commit }) {
-    return new Promise((resolve) => {
-      util.removeStorage("YXBJ-token");
-      commit("RESET_STATE");
-      resolve();
     });
   },
 };
