@@ -6,6 +6,7 @@
         <input
           class="uni-input"
           focus
+          v-model="title"
           placeholder-style="color: #999;font-size: 30rpx"
           placeholder="如：高考、项目、纪念日、家人生日等"
         />
@@ -24,9 +25,7 @@
       </view>
     </view>
     <view class="btn-auto">
-      <button class="btn" type="primary" @click="goto('/pages/detail/index')">
-        保存
-      </button>
+      <button class="btn" type="primary" @click="Save">保存</button>
       <button class="btn" type="default" @click="goto('/pages/add/index')">
         取消
       </button>
@@ -34,10 +33,12 @@
   </view>
 </template>
 <script>
+import { wishAdd } from "@/api/wish.js";
 export default {
   name: "add",
   data() {
     return {
+      title: "",
       date: "",
     };
   },
@@ -49,6 +50,18 @@ export default {
       uni.navigateTo({
         url: url,
       });
+    },
+    // 保存
+    Save() {
+      console.log(this.title, this.date);
+      const { title, date } = this;
+      wishAdd({ title, date })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
