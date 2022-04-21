@@ -2,7 +2,7 @@ import util, { msg } from "@/utils/util";
 import store from "@/store";
 
 // export const baseUrl = "https://api.youxiubiji.com";
-export const baseUrl = 'http://localhost:3000';
+export const baseUrl = 'http://192.168.0.113:3000';
 const qs = require("querystring");
 
 // get数据请求

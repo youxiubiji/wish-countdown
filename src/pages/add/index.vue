@@ -13,7 +13,12 @@
       </view>
       <view class="uni-form-item">
         <view class="title">倒计时日期</view>
-        <picker mode="date" @change="bindDateChange">
+        <picker
+          mode="date"
+          :start="startDate"
+          :end="endDate"
+          @change="bindDateChange"
+        >
           <input
             class="uni-input"
             :disabled="true"
@@ -26,42 +31,90 @@
     </view>
     <view class="btn-auto">
       <button class="btn" type="primary" @click="Save">保存</button>
-      <button class="btn" type="default" @click="goto('/pages/add/index')">
-        取消
-      </button>
+      <button class="btn" type="default" @click="back">取消</button>
     </view>
   </view>
 </template>
 <script>
-import { wishAdd } from "@/api/wish.js";
+import { wishAdd, wishInfo, wishEdit } from "@/api/wish.js";
 export default {
   name: "add",
   data() {
     return {
       title: "",
       date: "",
+      id: "",
     };
+  },
+  computed: {
+    startDate() {
+      return this.getDate("start");
+    },
+    endDate() {
+      return this.getDate("end");
+    },
+  },
+  onLoad(option) {
+    if (option.id) {
+      this.id = option.id;
+      uni.setNavigationBarTitle({
+        title: "修改心愿倒计时",
+      });
+      wishInfo({ id: option.id }).then((res) => {
+        this.title = res.title;
+        this.date = res.date;
+      });
+    } else {
+      uni.setNavigationBarTitle({
+        title: "新增心愿倒计时",
+      });
+    }
   },
   methods: {
     bindDateChange: function (e) {
       this.date = e.detail.value;
     },
-    goto(url) {
-      uni.navigateTo({
-        url: url,
-      });
-    },
     // 保存
     Save() {
-      console.log(this.title, this.date);
-      const { title, date } = this;
-      wishAdd({ title, date })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
+      if (!this.title) {
+        this.$showModal("请输入心愿倒计时名称");
+        return;
+      }
+      if (!this.date) {
+        this.$showModal("请选择倒计时日期");
+        return;
+      }
+      const { title, date, id } = this;
+      if (id) {
+        wishEdit({ id, title, date }).then(() => {
+          uni.redirectTo({
+            url: `/pages/detail/index?id=${id}`,
+          });
         });
+      } else {
+        wishAdd({ title, date }).then((res) => {
+          uni.redirectTo({
+            url: `/pages/detail/index?id=${res.id}`,
+          });
+        });
+      }
+    },
+    getDate(type) {
+      const date = new Date();
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+      if (type === "end") {
+        year = year + 10;
+      }
+      month = month > 9 ? month : "0" + month;
+      day = day > 9 ? day : "0" + day;
+      return `${year}-${month}-${day}`;
+    },
+    back() {
+      uni.navigateBack({
+        delta: 1,
+      });
     },
   },
 };

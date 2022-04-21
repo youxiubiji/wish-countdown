@@ -23,9 +23,20 @@
   </view>
 </template>
 <script>
+import { wishInfo } from "@/api/wish.js";
 export default {
   name: "",
   data() {},
+  onLoad(option) {
+    if (option.id) {
+      this.id = option.id;
+      wishInfo({ id: option.id }).then((res) => {
+        uni.setNavigationBarTitle({
+          title: res.title,
+        });
+      });
+    }
+  },
 };
 </script>
 <style lang="scss" scoped>

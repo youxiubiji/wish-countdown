@@ -1,33 +1,31 @@
 <template>
   <view class="content">
-    <view class="empty">
+    <view class="empty" v-if="!list.length">
       <view class="text">您还未设置心愿倒计时。</view>
       <view class="text">去创建一个吧。</view>
     </view>
-    <!-- <view class="list">
+    <view class="list" v-else>
       <uni-list :border="false">
         <uni-swipe-action>
-          <uni-swipe-action-item :right-options="options">
+          <uni-swipe-action-item
+            v-for="(item, index) in list"
+            :key="index"
+            :right-options="options"
+            @click="swipeClick($event, index, item.id)"
+          >
             <uni-list-item
               :border="false"
               :show-extra-icon="true"
               :extra-icon="{ size: '22', type: 'gift' }"
-              title="高考倒计时"
-              rightText="2022年3月12日"
-            />
-          </uni-swipe-action-item>
-          <uni-swipe-action-item :right-options="options">
-            <uni-list-item
-              ellipsis="1"
-              :show-extra-icon="true"
-              :extra-icon="{ size: '22', type: 'gift' }"
-              title="列表文字列表文字列表文字列表文字列表文字列表文字列表文字"
-              rightText="2022年3月12日"
+              :title="item.title"
+              :rightText="item.date"
+              clickable
+              @click="goDetail(item.id)"
             />
           </uni-swipe-action-item>
         </uni-swipe-action>
       </uni-list>
-    </view> -->
+    </view>
     <button class="btn" type="primary" @click="goto('/pages/add/index')">
       + 新增心愿倒计时
     </button>
@@ -35,6 +33,7 @@
 </template>
 
 <script>
+import { wishAll, wishDel } from "@/api/wish.js";
 export default {
   name: "index",
   data() {
@@ -53,24 +52,38 @@ export default {
           },
         },
       ],
+      list: [],
     };
   },
-  onLoad() {},
+  onLoad() {
+    wishAll()
+      .then((res) => {
+        this.list = res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
   methods: {
-    onClick(e) {
-      console.log(
-        "点击了" +
-          (e.position === "left" ? "左侧" : "右侧") +
-          e.content.text +
-          "按钮"
-      );
-    },
-    swipeChange(e, index) {
-      console.log("当前状态：" + e + "，下标：" + index);
+    swipeClick({ index }, key, id) {
+      if (index === 0) {
+        uni.navigateTo({
+          url: `/pages/add/index?id=${id}`,
+        });
+      } else {
+        wishDel({ id }).then(() => {
+          this.list.splice(key, 1);
+        });
+      }
     },
     goto(url) {
       uni.navigateTo({
         url: url,
+      });
+    },
+    goDetail(id) {
+      uni.navigateTo({
+        url: `/pages/detail/index?id=${id}`,
       });
     },
   },

@@ -47,10 +47,28 @@ const showLoad = (text = "加载中...") => {
 // 隐藏加载框
 const hideLoad = () => uni.hideLoading();
 
+//显示模态弹窗
+export const showModal = (content) => {
+  uni.showModal({
+    title: "提示",
+    content,
+    showCancel: false,
+  });
+};
+
+// 跳转链接地址
+const gotoUrl = (url) => {
+  uni.navigateTo({
+    url,
+  });
+};
+
 export default {
   storage,
   removeStorage,
   msg,
   showLoad,
   hideLoad,
+  showModal,
+  gotoUrl,
 };
