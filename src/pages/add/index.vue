@@ -14,6 +14,7 @@
       <view class="uni-form-item">
         <view class="title">倒计时日期</view>
         <picker
+          :value="date"
           mode="date"
           :start="startDate"
           :end="endDate"

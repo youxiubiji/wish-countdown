@@ -2,13 +2,13 @@
   <view class="content">
     <view class="box">
       <view class="title">{{ date }}</view>
-      <view class="date"> 3081<text>天</text> </view>
+      <view class="date"> {{ timeDay }}<text>天</text> </view>
       <view class="quotes">
-        <view class="list"> 任务善志，虽勇必伤。 </view>
-        <view class="author">---《座右铭》</view>
+        <view class="list"> {{ content }} </view>
+        <view v-if="author" class="author">---《{{ author }}》</view>
       </view>
     </view>
-    <view class="menu">
+    <view class="menu" v-if="isMMine">
       <text @click="goEdit">修改</text>
       <text @click="goDel">删除</text>
       <!-- <text>保存到相册</text> -->
@@ -17,30 +17,53 @@
       <button class="btn" type="primary" open-type="share">
         转发到群或好友
       </button>
-      <button class="btn" type="default">查看我的心愿倒计时</button>
+      <button class="btn" type="default" @click="myHome">
+        查看我的心愿倒计时
+      </button>
     </view>
     <view class="note">*下拉可切换名言</view>
   </view>
 </template>
 <script>
-import { wishInfo } from "@/api/wish.js";
+import { wishInfo, wishDel } from "@/api/wish.js";
+import { quoteInfo } from "@/api/quote.js";
 export default {
   name: "",
   data() {
     return {
       id: "",
       date: "",
+      title: "",
+      isMMine: false,
+      timeDay: 0,
+      content: "",
+      author: "",
     };
   },
   onLoad(option) {
     if (option.id) {
       this.id = option.id;
       wishInfo({ id: option.id }).then((res) => {
+        if (!res) {
+          return;
+        }
+        this.title = res.title;
         this.date = this.$util.FmtTime(res.date, "yyyy年MM月dd日");
         uni.setNavigationBarTitle({
           title: res.title,
         });
+        if (res.userId === this.$store.getters.info.id) {
+          this.isMMine = true;
+        }
+        let endTime =
+          new Date(res.date).getTime() / 1000 -
+          parseInt(new Date().getTime() / 1000);
+        this.timeDay =
+          parseInt(endTime / 60 / 60 / 24) > 0
+            ? parseInt(endTime / 60 / 60 / 24)
+            : 0; //相差天数
       });
+      this.getQuoteInfo();
     }
   },
   methods: {
@@ -54,12 +77,42 @@ export default {
      * 心愿删除
      */
     goDel() {
-      wishDel({ id: this.id }).then(() => {
-        uni.switchTab({
-          url: "/pages/index/index",
-        });
+      uni.showModal({
+        content: "要删除这个心愿倒计时？",
+        success: (res) => {
+          if (res.confirm) {
+            wishDel({ id: this.id }).then(() => {
+              uni.reLaunch({
+                url: "/pages/index/index",
+              });
+            });
+          }
+        },
       });
     },
+    // 我的心愿列表
+    myHome() {
+      uni.reLaunch({
+        url: "/pages/index/index",
+      });
+    },
+    // 获取名言
+    getQuoteInfo() {
+      quoteInfo().then((res) => {
+        this.content = res.content;
+        this.author = res.author;
+        uni.stopPullDownRefresh();
+      });
+    },
+  },
+  onPullDownRefresh() {
+    this.getQuoteInfo();
+  },
+  onShareAppMessage(res) {
+    return {
+      title: `距${this.title}还有`,
+      path: `/pages/detail/index?id=${this.id}`,
+    };
   },
 };
 </script>
@@ -87,7 +140,7 @@ export default {
       }
     }
     .quotes {
-      padding: 100rpx 30rpx;
+      padding: 80rpx 30rpx;
       display: flex;
       flex-direction: column;
       font-size: 28rpx;

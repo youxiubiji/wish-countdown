@@ -14,7 +14,7 @@
             @click="swipeClick($event, index, item.id)"
           >
             <uni-list-item
-              :border="false"
+              :border="true"
               :show-extra-icon="true"
               :extra-icon="{ size: '22', type: 'gift' }"
               :title="item.title"
@@ -59,11 +59,12 @@ export default {
       list: [],
     };
   },
-  onLoad() {
+  onShow() {
     wishAll().then((res) => {
       this.list = res;
     });
   },
+
   methods: {
     /**
      * 滑动操作 0编辑  1删除
