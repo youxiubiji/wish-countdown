@@ -71,6 +71,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * 心愿日期选择
+     */
     bindDateChange: function (e) {
       this.date = e.detail.value;
     },

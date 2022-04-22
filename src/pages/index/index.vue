@@ -18,7 +18,7 @@
               :show-extra-icon="true"
               :extra-icon="{ size: '22', type: 'gift' }"
               :title="item.title"
-              :rightText="item.date"
+              :rightText="$util.FmtTime(item.date, 'yyyy年MM月dd日')"
               clickable
               @click="goDetail(item.id)"
             />
@@ -26,7 +26,11 @@
         </uni-swipe-action>
       </uni-list>
     </view>
-    <button class="btn" type="primary" @click="goto('/pages/add/index')">
+    <button
+      class="btn"
+      type="primary"
+      @click="$util.gotoUrl('/pages/add/index')"
+    >
       + 新增心愿倒计时
     </button>
   </view>
@@ -56,35 +60,28 @@ export default {
     };
   },
   onLoad() {
-    wishAll()
-      .then((res) => {
-        this.list = res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    wishAll().then((res) => {
+      this.list = res;
+    });
   },
   methods: {
+    /**
+     * 滑动操作 0编辑  1删除
+     */
     swipeClick({ index }, key, id) {
       if (index === 0) {
-        uni.navigateTo({
-          url: `/pages/add/index?id=${id}`,
-        });
+        this.$util.gotoUrl(`/pages/add/index?id=${id}`);
       } else {
         wishDel({ id }).then(() => {
           this.list.splice(key, 1);
         });
       }
     },
-    goto(url) {
-      uni.navigateTo({
-        url: url,
-      });
-    },
+    /**
+     * 心愿详情
+     */
     goDetail(id) {
-      uni.navigateTo({
-        url: `/pages/detail/index?id=${id}`,
-      });
+      this.$util.gotoUrl(`/pages/detail/index?id=${id}`);
     },
   },
 };

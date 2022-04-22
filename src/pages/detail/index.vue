@@ -1,7 +1,7 @@
 <template>
   <view class="content">
     <view class="box">
-      <view class="title">2022年11月11日</view>
+      <view class="title">{{ date }}</view>
       <view class="date"> 3081<text>天</text> </view>
       <view class="quotes">
         <view class="list"> 任务善志，虽勇必伤。 </view>
@@ -9,9 +9,9 @@
       </view>
     </view>
     <view class="menu">
-      <text>修改</text>
-      <text>删除</text>
-      <text>保存到相册</text>
+      <text @click="goEdit">修改</text>
+      <text @click="goDel">删除</text>
+      <!-- <text>保存到相册</text> -->
     </view>
     <view class="btn-auto">
       <button class="btn" type="primary" open-type="share">
@@ -26,16 +26,40 @@
 import { wishInfo } from "@/api/wish.js";
 export default {
   name: "",
-  data() {},
+  data() {
+    return {
+      id: "",
+      date: "",
+    };
+  },
   onLoad(option) {
     if (option.id) {
       this.id = option.id;
       wishInfo({ id: option.id }).then((res) => {
+        this.date = this.$util.FmtTime(res.date, "yyyy年MM月dd日");
         uni.setNavigationBarTitle({
           title: res.title,
         });
       });
     }
+  },
+  methods: {
+    /**
+     * 编辑心愿
+     */
+    goEdit() {
+      this.$util.gotoUrl(`/pages/add/index?id=${this.id}`);
+    },
+    /**
+     * 心愿删除
+     */
+    goDel() {
+      wishDel({ id: this.id }).then(() => {
+        uni.switchTab({
+          url: "/pages/index/index",
+        });
+      });
+    },
   },
 };
 </script>
