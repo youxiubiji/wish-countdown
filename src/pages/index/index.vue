@@ -11,7 +11,7 @@
             v-for="(item, index) in list"
             :key="index"
             :right-options="options"
-            @click="swipeClick($event, index, item.id)"
+            @click="swipeClick($event, index, item.id, item.title)"
           >
             <uni-list-item
               :border="true"
@@ -69,12 +69,19 @@ export default {
     /**
      * 滑动操作 0编辑  1删除
      */
-    swipeClick({ index }, key, id) {
+    swipeClick({ index }, key, id, title) {
       if (index === 0) {
         this.$util.gotoUrl(`/pages/add/index?id=${id}`);
       } else {
-        wishDel({ id }).then(() => {
-          this.list.splice(key, 1);
+        uni.showModal({
+          content: `确定要删除${title}？`,
+          success: (res) => {
+            if (res.confirm) {
+              wishDel({ id }).then(() => {
+                this.list.splice(key, 1);
+              });
+            }
+          },
         });
       }
     },

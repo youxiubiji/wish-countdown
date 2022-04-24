@@ -1,7 +1,7 @@
 <template>
   <view class="content">
     <view class="box">
-      <view class="title">{{ date }}</view>
+      <view class="title">{{ $util.FmtTime(date, "yyyy年MM月dd日") }}</view>
       <view class="date"> {{ timeDay }}<text>天</text> </view>
       <view class="quotes">
         <view class="list"> {{ content }} </view>
@@ -14,8 +14,11 @@
       <!-- <text>保存到相册</text> -->
     </view>
     <view class="btn-auto">
-      <button class="btn" type="primary" open-type="share">
+      <button v-if="isMMine" class="btn" type="primary" open-type="share">
         转发到群或好友
+      </button>
+      <button v-else class="btn" type="primary" @click="focusWish">
+        关注此心愿
       </button>
       <button class="btn" type="default" @click="myHome">
         查看我的心愿倒计时
@@ -48,7 +51,7 @@ export default {
           return;
         }
         this.title = res.title;
-        this.date = this.$util.FmtTime(res.date, "yyyy年MM月dd日");
+        this.date = res.date;
         uni.setNavigationBarTitle({
           title: res.title,
         });
@@ -67,6 +70,17 @@ export default {
     }
   },
   methods: {
+    /**
+     * 关注此心愿
+     */
+    focusWish() {
+      const { title, date } = this;
+      wishAdd({ title, date }).then(() => {
+        uni.reLaunch({
+          url: "/pages/index/index",
+        });
+      });
+    },
     /**
      * 编辑心愿
      */

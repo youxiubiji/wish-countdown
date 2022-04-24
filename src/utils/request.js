@@ -17,7 +17,7 @@ export const get = (opt = {}) => {
     opt.headers || {}
   );
   // const isLoad = opt.isLoad != undefined ? opt.isLoad : true;
-  // const showMag = opt.showMag != undefined ? opt.showMag : true;
+  const showMag = opt.showMag != undefined ? opt.showMag : true;
   // isLoad && util.showLoad("加载中");
   return new Promise((resolve, reject) => {
     uni.request({
@@ -34,9 +34,9 @@ export const get = (opt = {}) => {
             util.removeStorage("YXBJ-token");
             store.dispatch("user/wxLogin");
           } else {
-            // if (showMag) {
-            //   msg(res.data.msg);
-            // }
+            if (showMag) {
+              msg(res.data.msg);
+            }
             reject(res.data);
           }
         } else {
@@ -66,7 +66,7 @@ export const post = (opt = {}) => {
     opt.headers || {}
   );
   // const isLoad = opt.isLoad != undefined ? opt.isLoad : true;
-  // const showMag = opt.showMag != undefined ? opt.showMag : true;
+  const showMag = opt.showMag != undefined ? opt.showMag : true;
   // isLoad && util.showLoad("加载中");
   return new Promise((resolve, reject) => {
     uni.request({
@@ -83,9 +83,9 @@ export const post = (opt = {}) => {
           } else if (res.data.code == 401) {
             util.removeStorage("YXBJ-token");
           } else {
-            // if (showMag) {
-            //   msg(res.data.msg);
-            // }
+            if (showMag) {
+              msg(res.data.msg);
+            }
             reject(res.data);
           }
         } else {
