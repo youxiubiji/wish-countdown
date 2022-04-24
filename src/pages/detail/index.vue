@@ -7,7 +7,7 @@
       <view class="date"> {{ timeDay }}<text>天</text> </view>
       <view class="quotes">
         <view class="list"> {{ content }} </view>
-        <view v-if="author" class="author">---《{{ author }}》</view>
+        <view v-if="author" class="author">{{ author }}</view>
       </view>
     </view>
     <view class="menu" v-if="isMMine">
