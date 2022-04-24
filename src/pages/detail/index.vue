@@ -113,6 +113,10 @@ export default {
     // 获取名言
     getQuoteInfo() {
       quoteInfo().then((res) => {
+        if (!res) {
+          uni.stopPullDownRefresh();
+          return;
+        }
         this.content = res.content;
         this.author = res.author;
         uni.stopPullDownRefresh();

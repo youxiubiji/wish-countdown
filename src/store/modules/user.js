@@ -1,8 +1,9 @@
 import { wxlogin, getInfo } from "@/api/user.js";
 import util from "@/utils/util";
+import { get, post } from "@/utils/request";
 const state = {
   info: "",
-  token: util.storage("YXBJ-token") || "",
+  token: util.storage("WISH-token") || "",
 };
 
 const mutations = {
@@ -11,13 +12,13 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token;
-    util.storage("YXBJ-token", token);
+    util.storage("WISH-token", token);
   },
 };
 
 const actions = {
   //微信登录
-  async wxLogin({ commit }) {
+  async wxLogin({ commit }, payload) {
     try {
       const code = await new Promise((resolve, reject) => {
         uni.login({
@@ -36,8 +37,11 @@ const actions = {
       commit("SET_TOKEN", token);
       const data = await getInfo();
       commit("SET_USERINFO", data);
+      const res =
+        payload.method == "GET" ? await get(payload) : await post(payload);
+      commit("SET_USERINFO", { data: res });
     } catch (error) {
-      util.removeStorage("YXBJ-token");
+      util.removeStorage("WISH-token");
       //TODO handle the exception
     }
   },

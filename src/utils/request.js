@@ -31,8 +31,10 @@ export const get = (opt = {}) => {
           if (res.data.code == 200) {
             resolve(res.data.data);
           } else if (res.data.code == 401) {
-            util.removeStorage("YXBJ-token");
-            store.dispatch("user/wxLogin");
+            util.removeStorage("WISH-token");
+            await store.dispatch("user/wxLogin", { ...opt, method: "GET" });
+            const { info } = store.getters;
+            resolve(info.data);
           } else {
             if (showMag) {
               msg(res.data.msg);
@@ -81,7 +83,10 @@ export const post = (opt = {}) => {
           if (res.data.code == 200) {
             resolve(res.data.data);
           } else if (res.data.code == 401) {
-            util.removeStorage("YXBJ-token");
+            util.removeStorage("WISH-token");
+            await store.dispatch("user/wxLogin", { ...opt, method: "POST" });
+            const { info } = store.getters;
+            resolve(info.data);
           } else {
             if (showMag) {
               msg(res.data.msg);

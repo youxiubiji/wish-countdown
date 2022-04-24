@@ -2,22 +2,13 @@
 import store from "@/store";
 export default {
   // onLaunch: function () {
-  //   console.log("App Launch");
+  //   try {
+  //     store.dispatch("user/wxLogin");
+  //   } catch (e) {
+  //     console.log(e);
+  //     //TODO handle the exception
+  //   }
   // },
-  // onShow: function () {
-  //   console.log("App Show");
-  // },
-  // onHide: function () {
-  //   console.log("App Hide");
-  // },
-  created() {
-    try {
-      store.dispatch("user/wxLogin");
-    } catch (e) {
-			console.log(e);
-      //TODO handle the exception
-    }
-  },
 };
 </script>
 
