@@ -64,7 +64,7 @@ export default {
       wishInfo({ id: option.id }).then((res) => {
         this.title = res.title;
         this.date = res.date;
-      });
+      }).catch(()=>{});
     } else {
       uni.setNavigationBarTitle({
         title: "新增心愿倒计时",
@@ -94,13 +94,13 @@ export default {
           uni.redirectTo({
             url: `/pages/detail/index?id=${id}`,
           });
-        });
+        }).catch(()=>{});
       } else {
         wishAdd({ title, date }).then((res) => {
           uni.redirectTo({
             url: `/pages/detail/index?id=${res.id}`,
           });
-        });
+        }).catch(()=>{});
       }
     },
     getDate(type) {

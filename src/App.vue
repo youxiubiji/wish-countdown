@@ -9,6 +9,13 @@ export default {
   //     //TODO handle the exception
   //   }
   // },
+  created() {
+    try {
+      if (store.getters.token) {
+        store.dispatch("user/getInfo");
+      }
+    } catch (error) {}
+  },
 };
 </script>
 

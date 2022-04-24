@@ -1,7 +1,9 @@
 <template>
   <view class="content">
     <view class="box">
-      <view class="title">{{ $util.FmtTime(date, "yyyy年MM月dd日") }}</view>
+      <view class="title" v-if="date">{{
+        $util.FmtTime(date, "yyyy年MM月dd日")
+      }}</view>
       <view class="date"> {{ timeDay }}<text>天</text> </view>
       <view class="quotes">
         <view class="list"> {{ content }} </view>
@@ -28,7 +30,7 @@
   </view>
 </template>
 <script>
-import { wishInfo, wishDel } from "@/api/wish.js";
+import { wishInfo, wishDel, wishAdd } from "@/api/wish.js";
 import { quoteInfo } from "@/api/quote.js";
 export default {
   name: "",
@@ -55,7 +57,7 @@ export default {
         uni.setNavigationBarTitle({
           title: res.title,
         });
-        if (res.userId === this.$store.getters.info.id) {
+        if (res.userId == this.$store.getters.info.id) {
           this.isMMine = true;
         }
         let endTime =
@@ -65,7 +67,7 @@ export default {
           parseInt(endTime / 60 / 60 / 24) > 0
             ? parseInt(endTime / 60 / 60 / 24)
             : 0; //相差天数
-      });
+      }).catch(()=>{});
       this.getQuoteInfo();
     }
   },
@@ -75,11 +77,15 @@ export default {
      */
     focusWish() {
       const { title, date } = this;
+      if (!title || !date) {
+        this.$showModal("此心愿已结束~");
+        return;
+      }
       wishAdd({ title, date }).then(() => {
         uni.reLaunch({
           url: "/pages/index/index",
         });
-      });
+      }).catch(()=>{});
     },
     /**
      * 编辑心愿
@@ -99,7 +105,7 @@ export default {
               uni.reLaunch({
                 url: "/pages/index/index",
               });
-            });
+            }).catch(()=>{});
           }
         },
       });
@@ -120,7 +126,7 @@ export default {
         this.content = res.content;
         this.author = res.author;
         uni.stopPullDownRefresh();
-      });
+      }).catch(()=>{});
     },
   },
   onPullDownRefresh() {

@@ -62,7 +62,7 @@ export default {
   onShow() {
     wishAll().then((res) => {
       this.list = res;
-    });
+    }).catch(()=>{});
   },
 
   methods: {
@@ -79,7 +79,7 @@ export default {
             if (res.confirm) {
               wishDel({ id }).then(() => {
                 this.list.splice(key, 1);
-              });
+              }).catch(()=>{});
             }
           },
         });
