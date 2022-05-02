@@ -2,7 +2,7 @@ import util, { msg } from '@/utils/util';
 import store from '@/store';
 
 export const baseUrl = 'https://wish.youxiubiji.com';
-// export const baseUrl = "http://localhost:5000";
+// export const baseUrl = 'http://192.168.0.113:5000';
 const qs = require('querystring');
 
 // get数据请求
@@ -32,7 +32,12 @@ export const get = (opt = {}) => {
                         resolve(res.data.data);
                     } else if (res.data.code == 401) {
                         util.removeStorage('WISH-token');
+                        // #ifdef MP-WEIXIN
                         await store.dispatch('user/wxLogin', { ...opt, method: 'GET' });
+                        // #endif
+                        // #ifdef MP-QQ
+                        await store.dispatch('user/qqLogin', { ...opt, method: 'GET' });
+                        // #endif
                         const { info } = store.getters;
                         resolve(info.data);
                     } else {
@@ -84,7 +89,12 @@ export const post = (opt = {}) => {
                         resolve(res.data.data);
                     } else if (res.data.code == 401) {
                         util.removeStorage('WISH-token');
-                        await store.dispatch('user/wxLogin', { ...opt, method: 'POST' });
+                        // #ifdef MP-WEIXIN
+                        await store.dispatch('user/wxLogin', { ...opt, method: 'GET' });
+                        // #endif
+                        // #ifdef MP-QQ
+                        await store.dispatch('user/qqLogin', { ...opt, method: 'GET' });
+                        // #endif;
                         const { info } = store.getters;
                         resolve(info.data);
                     } else {
